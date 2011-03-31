@@ -88,6 +88,11 @@ public class KFakeMenuItem extends KLabel {
 					Toolkit.getDefaultToolkit().getSystemEventQueue(). postEvent(
 							new ActionEvent(self(), ActionEvent.ACTION_PERFORMED, "R"+m_text));
 				}
+				else if (e.getKeyChar()=='n'||e.getKeyChar()=='N')
+				{
+					Toolkit.getDefaultToolkit().getSystemEventQueue(). postEvent(
+							new ActionEvent(self(), ActionEvent.ACTION_PERFORMED, "N"));
+				}
 			}
 			public void keyPressed(KeyEvent e) {}
 		});

@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -43,10 +44,13 @@ import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
+
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
 import com.amazon.kindle.kindlet.ui.KBoxLayout;
+import com.amazon.kindle.kindlet.ui.KImage;
 import com.amazon.kindle.kindlet.ui.KLabel;
 import com.amazon.kindle.kindlet.ui.KLabelMultiline;
 import com.amazon.kindle.kindlet.ui.KMenu;
@@ -61,6 +65,7 @@ import com.amazon.kindle.kindlet.ui.KTextArea;
 import com.amazon.kindle.kindlet.ui.KTextField;
 import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
 import com.amazon.kindle.kindlet.ui.KTextOptionPane;
+import com.amazon.kindle.kindlet.ui.border.KBorder;
 import com.amazon.kindle.kindlet.ui.border.KLineBorder;
 import com.amazon.kindle.kindlet.ui.pages.PageProviders;
 
@@ -82,9 +87,19 @@ public class KindleNote extends AbstractKindlet {
 	private boolean textIsNew = false;
 	private KLabel pageLabel;
 	private KFakeMenuItem item2rename;
+	private KImage southImage;
 	
 	public void create(KindletContext context) {
 		this.itemsList = new ArrayList();
+		this.southImage = null;
+//		try {
+//			File f = new File(ctx.getHomeDirectory()+"/"+"keyboard.png");
+//			BufferedImage img = ImageIO.read(f);
+//			this.southImage = new KImage(img);
+//					KImage.ALIGN_CENTER,KImage.ALIGN_BOTTOM);
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 		this.ctx = context;
 		this.pageLabel = new KLabel("KindleNote by proDOOMman",KLabel.CENTER);
 		this.pageLabel.setForeground(Color.white);
@@ -130,27 +145,7 @@ public class KindleNote extends AbstractKindlet {
 		this.newItem = new KMenuItem("Новая заметка");
 		this.newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Date dtn = new Date();
-			    SimpleDateFormat formatter1 = new SimpleDateFormat(
-			        "dd.MM.yyyy hh-mm");
-			    String dt=formatter1.format(dtn);
-				KOptionPane.showInputDialog(ctx.getRootContainer(),
-						"Название заметки: ", dt,new InputDialogListener() {
-
-					public void onClose(String arg0) {
-						File file = new File(ctx.getHomeDirectory(),arg0+".txt");
-						if(!file.exists())
-						{
-							try {
-								file.createNewFile();
-								addHomeItem(arg0,0);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						openAndEditFile(arg0);
-					}
-				});
+				newItem();
 			}
 		});
 		this.menu.add(newItem);
@@ -164,6 +159,7 @@ public class KindleNote extends AbstractKindlet {
 							"Enter - открыть заметку (первое нажатие - чтение, второе - редактирование)\n" +
 							"R - переименовать заметку\n" +
 							"E - редактировать заметку\n" +
+							"N - создать заметку\n" +
 							"Back - возврат в предыдущее меню",
 							new MessageDialogListener(){
 								public void onClose() {
@@ -224,6 +220,8 @@ public class KindleNote extends AbstractKindlet {
 						});
 					}
 					ctx.getRootContainer().remove(textEdit);
+					if(southImage!=null)
+						ctx.getRootContainer().remove(southImage);
 					ctx.getRootContainer().add(plainText);
 					plainText.requestFocus();
 					arg0.consume();
@@ -268,6 +266,8 @@ public class KindleNote extends AbstractKindlet {
 					ctx.getRootContainer().remove(plainText);
 					textEdit.setText(plainText.getText());
 					ctx.getRootContainer().add(textEdit);
+					if(southImage!=null)
+						ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
 					textEdit.requestFocus();
 				}
 			}
@@ -388,6 +388,10 @@ public class KindleNote extends AbstractKindlet {
 					pageLabel.setText("");
 					pageLabel.repaint();
 				}
+				else if(e.getActionCommand().startsWith("N"))
+				{
+					newItem();
+				}
 			}
 		});
 		item.setBorder(new KLineBorder(4,true));
@@ -450,5 +454,42 @@ public class KindleNote extends AbstractKindlet {
 		textEdit.setText(plainText.getText());
 		ctx.getRootContainer().add(textEdit);
 		textEdit.requestFocus();
+	}
+	public void stop() {
+		if(textEdit.hasFocus())
+		{
+			try {
+				FileWriter outFile = new FileWriter(currentFileName);
+				PrintWriter out = new PrintWriter(outFile);
+				out.print(textEdit.getText());
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		super.stop();
+	}
+	public void newItem(){
+		Date dtn = new Date();
+	    SimpleDateFormat formatter1 = new SimpleDateFormat(
+	        "dd.MM.yyyy hh-mm");
+	    String dt=formatter1.format(dtn);
+		KOptionPane.showInputDialog(ctx.getRootContainer(),
+				"Название заметки: ", dt,new InputDialogListener() {
+
+			public void onClose(String arg0) {
+				File file = new File(ctx.getHomeDirectory(),arg0+".txt");
+				if(!file.exists())
+				{
+					try {
+						file.createNewFile();
+						addHomeItem(arg0,0);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				openAndEditFile(arg0);
+			}
+		});
 	}
 }
