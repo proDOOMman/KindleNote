@@ -1,0 +1,468 @@
+<project name="KindleNote" default="buildAll" basedir=".">
+
+<!-- Created by KKKindle -->
+
+<!--
+
+==================== Including Properties ===================
+
+-->
+
+   <property file="Ant.properties"/>
+
+   
+
+<!--
+
+==================== Compilation Options ====================
+
+-->
+
+   <property name="cmp_debug" value="true" />
+
+   <property name="cmp_deprecation" value="false" />
+
+   <property name="cmp_optimize" value="true" />
+
+   <path id="cmp_classpath">
+
+           <fileset dir="${env_libDir}">
+
+                   <include name="*.jar" />
+
+           </fileset>
+
+   </path>
+
+<!--
+
+==================== Clean Target ===========================
+
+-->
+
+   <target
+
+         name="clean"
+
+         description="Clean all">
+
+           <delete dir="${env_classDir}" />
+
+           <delete dir="${env_buildDir}" />
+
+   </target>
+
+<!--
+
+==================== Prepare Target =========================
+
+-->
+
+   <target
+
+         name="prepare"
+
+         depends="clean"
+
+         description="Prepare build dirs">
+
+           <mkdir dir="${env_classDir}" />
+
+           <mkdir dir="${env_buildDir}" />
+
+   </target>
+
+<!--
+
+==================== Compile Target =========================
+
+-->
+
+   <target
+
+         name="compile"
+
+         depends="prepare"
+
+         description="Compile Java sources">
+
+           <javac
+
+                   srcdir="${env_sourceDir}"
+
+                   destdir="${env_classDir}"
+
+                   debug="${cmp_debug}"
+
+                   deprecation="${cmp_deprecation}"
+
+                   optimize="${cmp_optimize}"
+
+                   target="${env_target}"
+
+                   source="${env_source}">
+
+                   <classpath refid="cmp_classpath" />
+
+           </javac>
+
+   </target>
+
+<!--
+
+==================== Create JAR archive Target ==============
+
+-->
+
+   <target
+
+           name="createJAR"
+
+           depends="compile"
+
+           description="Create JAR archive">
+
+           <jar
+
+                   destfile="${env_buildDir}/${app_name}.jar"
+
+                   basedir="${env_classDir}">
+
+                   <manifest>
+
+                           <attribute
+
+                                   name="Manifest-Version"
+
+                                   value="${app_manVersion}" />
+
+                           <attribute
+
+                                   name="Main-Class"
+
+                                   value="${app_mainClass}" />
+
+                           <attribute
+
+                                   name="Implementation-Title"
+
+                                   value="${app_title}" />
+
+                           <attribute
+
+                                   name="Implementation-Version"
+
+                                   value="${app_version}" />
+
+                           <attribute
+
+                                   name="Implementation-Vendor"
+
+                                   value="${app_author}" />
+
+                   </manifest>
+
+           </jar>
+
+   </target>
+
+<!--
+
+==================== Create Keystore Target =================
+
+-->
+
+   <target
+
+           name="createNewKeystore"
+
+           description="Create New Keystore">
+
+           <delete dir="${env_keystoreDir}" />
+
+           <mkdir dir="${env_keystoreDir}" />            
+
+           <genkey
+
+                   keystore="${env_keystoreDir}/${key_keyStore}"
+
+                   alias="dk${key_keyAlias}"
+
+                   storepass="${key_storePass}"
+
+                   keypass="${key_keyPass}"
+
+                   validity="${key_validity}">
+
+                   <dname>
+
+                           <param name="CN" value="${sgn_company}" />
+
+                           <param name="OU" value="${sgn_orgunit}" />
+
+                           <param name="O" value="${sgn_org}" />
+
+                           <param name="L" value="${sgn_city}" />
+
+                           <param name="ST" value="${sgn_state}" />
+
+                           <param name="C" value="${sgn_ccode}" />
+
+                   </dname>
+
+           </genkey>
+
+           <genkey
+
+                   keystore="${env_keystoreDir}/${key_keyStore}"
+
+                   alias="di${key_keyAlias}"
+
+                   storepass="${key_storePass}"
+
+                   keypass="${key_keyPass}"
+
+                   validity="${key_validity}">
+
+                   <dname>
+
+                           <param name="CN" value="${sgn_company}" />
+
+                           <param name="OU" value="${sgn_orgunit}" />
+
+                           <param name="O" value="${sgn_org}" />
+
+                           <param name="L" value="${sgn_city}" />
+
+                           <param name="ST" value="${sgn_state}" />
+
+                           <param name="C" value="${sgn_ccode}" />
+
+                   </dname>
+
+           </genkey>
+
+           <genkey
+
+                   keystore="${env_keystoreDir}/${key_keyStore}"
+
+                   alias="dn${key_keyAlias}"
+
+                   storepass="${key_storePass}"
+
+                   keypass="${key_keyPass}"
+
+                   validity="${key_validity}">
+
+                   <dname>
+
+                           <param name="CN" value="${sgn_company}" />
+
+                           <param name="OU" value="${sgn_orgunit}" />
+
+                           <param name="O" value="${sgn_org}" />
+
+                           <param name="L" value="${sgn_city}" />
+
+                           <param name="ST" value="${sgn_state}" />
+
+                           <param name="C" value="${sgn_ccode}" />
+
+                   </dname>
+
+           </genkey>
+
+   </target>
+
+<!--
+
+==================== JAR Singing Target =====================
+
+-->
+
+   <target
+
+         name="signJAR"
+
+         depends="createJAR"
+
+           description="Signing JAR archive">
+
+           <copy
+
+                   file="${env_buildDir}/${app_name}.jar"
+
+                   tofile="${env_buildDir}/${app_name}.jar.tmp" />
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_name}.jar
+
+                           dk${key_keyAlias}" />
+
+           </exec>
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_name}.jar
+
+                           di${key_keyAlias}" />
+
+           </exec>
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_name}.jar
+
+                           dn${key_keyAlias}" />
+
+           </exec>
+
+   </target>
+
+<!--
+
+==================== Create Kindlet Target ==================
+
+-->
+
+   <target
+
+           name="createKindlet"
+
+           depends="signJAR"
+
+           description="Create kindlet">
+
+           <move
+
+                   file="${env_buildDir}/${app_name}.jar"
+
+                   tofile="${env_buildDir}/${app_name}.azw2" />
+
+           <move
+
+                   file="${env_buildDir}/${app_name}.jar.tmp"
+
+                   tofile="${env_buildDir}/${app_name}.jar" />
+
+   </target>
+	
+	<!--
+
+	==================== Copy Kindlet Target ==================
+
+	-->
+
+	   <target
+
+	           name="copyKindlet"
+
+	           depends="createKindlet"
+
+	           description="Copy kindlet to device over sftp">
+	   	
+				<exec executable="scp">
+						<arg line="${env_buildDir}/${app_name}.azw2
+								root@192.168.0.104:/mnt/us/documents"/>
+				</exec>
+
+	   </target>
+
+<!--
+
+==================== External JAR Singing Target ============
+
+-->
+
+   <target
+
+         name="signExternalJAR"
+
+           description="Signing JAR archive">
+
+           <copy
+
+                   file="${env_buildDir}/${app_extName}.jar"
+
+                   tofile="${env_buildDir}/${app_extName}.jar.tmp" />
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_extName}.jar
+
+                           dk${key_keyAlias}" />
+
+           </exec>
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_extName}.jar
+
+                           di${key_keyAlias}" />
+
+           </exec>
+
+           <exec dir="${env_keystoreDir}" executable="jarsigner">
+
+                   <arg line="-keystore ${key_keyStore}
+
+                           -storepass ${key_storePass}
+
+                           ${basedir}/${env_buildDir}/${app_extName}.jar
+
+                           dn${key_keyAlias}" />
+
+           </exec>
+
+           <move
+
+                   file="${env_buildDir}/${app_extName}.jar"
+
+                   tofile="${env_buildDir}/${app_extName}.azw2" />
+
+           <move
+
+                   file="${env_buildDir}/${app_extName}.jar.tmp"
+
+                   tofile="${env_buildDir}/${app_extName}.jar" />
+
+   </target>
+
+   
+
+<!--
+
+==================== Build All Target =======================
+
+-->
+
+   <target
+
+           name="buildAll"
+
+           depends="copyKindlet"
+
+           description="Build the project and create signed kindlet" />
+
+</project>
