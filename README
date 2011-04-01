@@ -1,5 +1,5 @@
 1) Установливаем Jailbreak (http://www.the-ebook.org/forum/viewtopic.php?t=17874)
-2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer.zip).
+2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.2.zip).
 3) Подключаем Kindle к компьютеру и копируем KindleNote.azw2 в папку documents, а нужный* файл из архива developer-keystore-installer.zip - в корневую директорию (ну как и любой хак, вы же поняли).
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle перезапускается
@@ -12,3 +12,7 @@
 - k3g - Kindle 3G [B006]
 - k3gb - Kindle 3G UK [B00A]
 - и т.д.
+
+-----
+Если при запуске киндлета появляется ошибка "The device is not registered as a Test Kindle...", то идем в раздел https://github.com/proDOOMman/KindleNote/issues, где подробно описываем процесс установки, версию устройства, прошивки, установленные хаки и прилагаем файл dev-key/install.log, живущий на киндле (он появляется после установки developer-keystore-installer)
+Если у вас нет аккаунта на гитхабе и по каким-то причинам вы не можете (или не хотите) его создать - можно просто отписаться на форуме http://www.the-ebook.org/forum/viewtopic.php?t=16645, приложив ту же информацию

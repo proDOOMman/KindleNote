@@ -1,7 +1,4 @@
 #!/bin/sh
-#
-# $Id: install.sh 7177 2010-11-14 21:12:34Z NiLuJe $
-#
 # diff OTA patch script
 
 _FUNCTIONS=/etc/rc.d/functions
@@ -46,6 +43,7 @@ logmsg()
     fi
 
     [ "$_MSG_LEVEL" != "D" ] && echo "ota_install: $_MSG_LEVEL def:$_MSG_COMP:$_NVPAIRS:$_FREETEXT"
+    [ -d /mnt/us/dev-key ] && echo "ota_install: $_MSG_LEVEL def:$_MSG_COMP:$_NVPAIRS:$_FREETEXT" >> /mnt/us/dev-key/install.log
 }
 
 if [ -z "${_PERCENT_COMPLETE}" ]; then
@@ -58,14 +56,22 @@ update_percent_complete()
     update_progressbar ${_PERCENT_COMPLETE}
 }
 
-# Hack specific config (name and when to start/stop)
-HACKNAME="dev-key"
-
+[ -d /mnt/us/dev-key ] || mkdir /mnt/us/dev-key
+logmsg "I" "update" "Update started"
 update_percent_complete 2
-logmsg "I" "update" "start"
+
+logmsg "I" "update" "Keystore before installion:"
+ls -lha /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
+md5sum /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
+
+update_percent_complete 30
 
 update_percent_complete 51
-cp -f developer.keystore /var/local/java/keystore/
+mv -f developer.keystore /var/local/java/keystore/developer.keystore
+
+logmsg "I" "update" "Keystore after installion:"
+ls -lha /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
+md5sum /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
 
 logmsg "I" "update" "done"
 update_progressbar 100

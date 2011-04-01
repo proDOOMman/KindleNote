@@ -1,7 +1,4 @@
 #!/bin/sh
-#
-# $Id: uninstall.sh 6591 2010-08-06 20:50:57Z NiLuJe $
-#
 # diff OTA patch script
 
 _FUNCTIONS=/etc/rc.d/functions
@@ -58,18 +55,8 @@ update_percent_complete()
     update_progressbar ${_PERCENT_COMPLETE}
 }
 
-# Hack specific config (name and when to start/stop)
-HACKNAME="linkss"
-SLEVEL="73"
-KLEVEL="08"
-
-update_percent_complete 2
-logmsg "I" "update" "removing developer.keystore"
-
-update_percent_complete 51
-rm /var/local/java/keystore/developer.keystore
-
-logmsg "I" "update" "done"
+update_progressbar 50
+[ -f /var/local/java/keystore/developer.keystore ] && rm -f /var/local/java/keystore/developer.keystore
 update_progressbar 100
 
 return 0
