@@ -139,7 +139,8 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.menu.add(newItem);
-		this.menu.add("Управление", new ActionListener() {
+		KMenuItem tempItem = new KMenuItem("Управление");
+		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
@@ -161,7 +162,9 @@ public class KindleNote extends AbstractKindlet {
 				}
 			}
 		});
-		this.menu.add("Справка", new ActionListener() {
+		this.menu.add(tempItem);
+		tempItem = new KMenuItem("Справка");
+		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
@@ -180,7 +183,9 @@ public class KindleNote extends AbstractKindlet {
 				}
 			}
 		});
-		this.menu.add("О программе", new ActionListener() {
+		this.menu.add(tempItem);
+		tempItem = new KMenuItem("О программе");
+		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
@@ -195,6 +200,7 @@ public class KindleNote extends AbstractKindlet {
 				}
 			}
 		});
+		this.menu.add(tempItem);
 		this.ctx.setMenu(this.menu);
 		this.textEdit = new KTextArea();
 		this.textEdit.addKeyListener(new KeyListener() {
