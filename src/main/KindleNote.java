@@ -17,8 +17,6 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -27,9 +25,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,11 +40,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.imageio.ImageIO;
-
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
@@ -70,7 +60,6 @@ import com.amazon.kindle.kindlet.ui.KTextArea;
 import com.amazon.kindle.kindlet.ui.KTextField;
 import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
 import com.amazon.kindle.kindlet.ui.KTextOptionPane;
-import com.amazon.kindle.kindlet.ui.border.KBorder;
 import com.amazon.kindle.kindlet.ui.border.KLineBorder;
 import com.amazon.kindle.kindlet.ui.pages.PageProviders;
 
