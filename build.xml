@@ -67,6 +67,8 @@
          description="Prepare build dirs">
 
            <mkdir dir="${env_classDir}" />
+   	
+   		   <mkdir dir="${env_classDir}/lang" />
 
            <mkdir dir="${env_buildDir}" />
 
@@ -121,6 +123,10 @@
            depends="compile"
 
            description="Create JAR archive">
+   	
+   		   <copy todir="${env_classDir}/lang">
+   				<fileset dir="src/lang"/>
+   		   </copy> 
 
            <jar
 

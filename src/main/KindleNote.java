@@ -40,6 +40,9 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
 import com.amazon.kindle.kindlet.event.KindleKeyCodes;
@@ -62,6 +65,7 @@ import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
 import com.amazon.kindle.kindlet.ui.KTextOptionPane;
 import com.amazon.kindle.kindlet.ui.border.KLineBorder;
 import com.amazon.kindle.kindlet.ui.pages.PageProviders;
+import com.ibm.icu.impl.data.ResourceReader;
 
 public class KindleNote extends AbstractKindlet {
 
@@ -76,18 +80,20 @@ public class KindleNote extends AbstractKindlet {
 	private KFakeMenuItem item2del;
 	private KFakeMenuItem lastFocus;
 	private KTextField searchField;
-//	private KFakeMenuItem[] itemsList;
 	private List itemsList;
 	private boolean textIsNew = false;
 	private KLabel pageLabel;
 	private KFakeMenuItem item2rename;
 	private KImage southImage;
 	private KPanel northPanel;
+	private ResourceBundle i18n;
 	
 	public void create(KindletContext context) {
+//		i18n = ResourceBundle.getBundle("lang/lang", new Locale("ru"));
+		i18n = ResourceBundle.getBundle("lang/lang", new Locale("en"));
 		this.itemsList = new ArrayList();
 		this.northPanel = new KPanel(new BorderLayout());
-		this.northPanel.add(new KLabel("Фильтр: "),BorderLayout.WEST);
+		this.northPanel.add(new KLabel(i18n.getString("filter")),BorderLayout.WEST);
 		this.ctx = context;
 		this.pageLabel = new KLabel("KindleNote by proDOOMman",KLabel.CENTER);
 		this.pageLabel.setForeground(Color.white);
@@ -132,26 +138,19 @@ public class KindleNote extends AbstractKindlet {
 		});
 //		ctx.getRootContainer().add(searchField, BorderLayout.NORTH);
 		ctx.getRootContainer().add(northPanel, BorderLayout.NORTH);
-		this.newItem = new KMenuItem("Новая заметка");
+		this.newItem = new KMenuItem(i18n.getString("new_note"));
 		this.newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				newItem();
 			}
 		});
 		this.menu.add(newItem);
-		KMenuItem tempItem = new KMenuItem("Управление");
+		KMenuItem tempItem = new KMenuItem(i18n.getString("control"));
 		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
-							"Комбинации клавиш:\n" +
-							"Del - удалить заметку\n" +
-							"Enter - открыть заметку (первое нажатие - чтение, второе - редактирование)\n" +
-							"R - переименовать заметку\n" +
-							"E - редактировать заметку\n" +
-							"N - создать заметку\n" +
-							"Back - возврат в предыдущее меню\n" +
-							"Shift+Space - переключить раскладку",
+							i18n.getString("control_text"),
 							new MessageDialogListener(){
 								public void onClose() {
 									//nothing
@@ -163,16 +162,12 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.menu.add(tempItem);
-		tempItem = new KMenuItem("Справка");
+		tempItem = new KMenuItem(i18n.getString("help"));
 		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
-							"Hints:\n" +
-							"* настройки альтернативной раскладки хранится в файле keyboard.txt\n" +
-							"* файл keyboard.png будет отображаться во время редактирования в качестве подсказки раскладки\n" +
-							"Данные файлы следует распологать в директории\n" +
-							"(/mnt/us/)developer/KindleNote/work/",
+							i18n.getString("help_text"),
 							new MessageDialogListener(){
 								public void onClose() {
 									//nothing
@@ -184,12 +179,12 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.menu.add(tempItem);
-		tempItem = new KMenuItem("О программе");
+		tempItem = new KMenuItem(i18n.getString("about"));
 		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
-							"Программа KindleNote\nCopyleft proDOOMman 2011\nLicense: GPLv3",
+							i18n.getString("about_text"),
 							new MessageDialogListener(){
 								public void onClose() {
 									//nothing
@@ -230,7 +225,7 @@ public class KindleNote extends AbstractKindlet {
 					}
 					else if(plainText.getText().compareTo(textEdit.getText())!=0)
 					{
-						KOptionPane.showConfirmDialog(ctx.getRootContainer(), "Сохранить изменения?", new ConfirmDialogListener(){
+						KOptionPane.showConfirmDialog(ctx.getRootContainer(), i18n.getString("save"), new ConfirmDialogListener(){
 							public void onClose(int arg0) {
 								if(arg0 == KOptionPane.OK_OPTION)
 								{
@@ -328,7 +323,7 @@ public class KindleNote extends AbstractKindlet {
 		}
 		try {
 			ctx.getProgressIndicator().setIndeterminate(true);
-			ctx.getProgressIndicator().setString("Запуск...");
+			ctx.getProgressIndicator().setString(i18n.getString("start"));
 			KTextOptionPane pane = new KTextOptionPane();
 			pane.addOrientationMenu(new KTextOptionOrientationMenu());
 			ctx.setTextOptionPane(pane);
@@ -391,7 +386,7 @@ public class KindleNote extends AbstractKindlet {
 				else if(e.getActionCommand().startsWith("R"))//Переименовать
 				{
 					item2rename = (KFakeMenuItem)e.getSource();
-					KOptionPane.showInputDialog(ctx.getRootContainer(), "Новое название заметки: ", item2rename.getText(), new InputDialogListener() {
+					KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("new"), item2rename.getText(), new InputDialogListener() {
 						public void onClose(String arg0) {
 							File f = new File(ctx.getHomeDirectory(),item2rename.getText()+".txt");
 							if(f.renameTo(new File(ctx.getHomeDirectory(),arg0+".txt")))
@@ -405,7 +400,7 @@ public class KindleNote extends AbstractKindlet {
 				{
 					file2del = fname;
 					item2del = (KFakeMenuItem)e.getSource();
-					KOptionPane.showConfirmDialog(null, "Удалить заметку \""+fname+"\"?",
+					KOptionPane.showConfirmDialog(null, i18n.getString("del")+" \""+fname+"\"?",
 							new ConfirmDialogListener(){
 						public void onClose(int arg0) {
 							if(arg0 == KOptionPane.OK_OPTION)
@@ -422,8 +417,8 @@ public class KindleNote extends AbstractKindlet {
 				}
 				else if(e.getActionCommand().startsWith("F1"))
 				{
-					pageLabel.setText("Заметка "+String.valueOf(homeMenu.indexOfItem(e.getSource())+1)
-							+" из "+
+					pageLabel.setText(i18n.getString("note")+String.valueOf(homeMenu.indexOfItem(e.getSource())+1)
+							+i18n.getString("from")+
 							String.valueOf(itemsList.size()));
 					pageLabel.repaint();
 				}
@@ -472,7 +467,7 @@ public class KindleNote extends AbstractKindlet {
 					e.printStackTrace();
 				}
 			} catch (FileNotFoundException e) {
-				KOptionPane.showMessageDialog(null, "Файл не найден!", new MessageDialogListener() {
+				KOptionPane.showMessageDialog(null, i18n.getString("not_found"), new MessageDialogListener() {
 					
 					public void onClose() {
 						//nothing
@@ -521,7 +516,7 @@ public class KindleNote extends AbstractKindlet {
 	        "dd.MM.yyyy hh-mm");
 	    String dt=formatter1.format(dtn);
 		KOptionPane.showInputDialog(ctx.getRootContainer(),
-				"Название заметки: ", dt,new InputDialogListener() {
+				i18n.getString("new_note_name"), dt,new InputDialogListener() {
 
 			public void onClose(String arg0) {
 				if(arg0==null)
