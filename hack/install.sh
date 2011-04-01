@@ -57,6 +57,7 @@ update_percent_complete()
 }
 
 [ -d /mnt/us/dev-key ] || mkdir /mnt/us/dev-key
+[ -d /var/local/java/keystore ] || mkdir -p /var/local/java/keystore
 logmsg "I" "update" "Update started"
 update_percent_complete 2
 

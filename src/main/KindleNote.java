@@ -17,6 +17,8 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -61,6 +63,7 @@ import com.amazon.kindle.kindlet.ui.KOptionPane.ConfirmDialogListener;
 import com.amazon.kindle.kindlet.ui.KOptionPane.InputDialogListener;
 import com.amazon.kindle.kindlet.ui.KOptionPane.MessageDialogListener;
 import com.amazon.kindle.kindlet.ui.KPages;
+import com.amazon.kindle.kindlet.ui.KPanel;
 import com.amazon.kindle.kindlet.ui.KTextArea;
 import com.amazon.kindle.kindlet.ui.KTextField;
 import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
@@ -88,9 +91,12 @@ public class KindleNote extends AbstractKindlet {
 	private KLabel pageLabel;
 	private KFakeMenuItem item2rename;
 	private KImage southImage;
+	private KPanel northPanel;
 	
 	public void create(KindletContext context) {
 		this.itemsList = new ArrayList();
+		this.northPanel = new KPanel(new BorderLayout());
+		this.northPanel.add(new KLabel("Фильтр: "),BorderLayout.WEST);
 		this.southImage = null;
 //		try {
 //			File f = new File(ctx.getHomeDirectory()+"/"+"keyboard.png");
@@ -107,6 +113,7 @@ public class KindleNote extends AbstractKindlet {
 		ctx.getRootContainer().add(pageLabel, BorderLayout.SOUTH);
 		this.menu = new KMenu();
 		this.searchField = new KTextField();
+		this.northPanel.add(this.searchField);
 		this.searchField.setBorder(new KLineBorder(3,true));
 		this.searchField.addTextListener(new TextListener(){
 			public void textValueChanged(TextEvent arg0) {
@@ -141,7 +148,8 @@ public class KindleNote extends AbstractKindlet {
 				homeMenu.repaint();
 			}
 		});
-		ctx.getRootContainer().add(searchField, BorderLayout.NORTH);
+//		ctx.getRootContainer().add(searchField, BorderLayout.NORTH);
+		ctx.getRootContainer().add(northPanel, BorderLayout.NORTH);
 		this.newItem = new KMenuItem("Новая заметка");
 		this.newItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -252,7 +260,8 @@ public class KindleNote extends AbstractKindlet {
 				{
 					ctx.getRootContainer().remove(plainText);
 					ctx.getRootContainer().add(homeMenu);
-					ctx.getRootContainer().add(searchField, BorderLayout.NORTH);
+//					ctx.getRootContainer().add(searchField, BorderLayout.NORTH);
+					ctx.getRootContainer().add(northPanel, BorderLayout.NORTH);
 					ctx.getRootContainer().add(pageLabel, BorderLayout.SOUTH);
 					ctx.setSubTitle("");
 					currentFileName = "";
@@ -439,7 +448,8 @@ public class KindleNote extends AbstractKindlet {
 			}
 			this.newItem.setEnabled(false);
 			ctx.getRootContainer().remove(this.homeMenu);
-			ctx.getRootContainer().remove(this.searchField);
+//			ctx.getRootContainer().remove(this.searchField);
+			ctx.getRootContainer().remove(this.northPanel);
 			ctx.getRootContainer().remove(this.pageLabel);
 			plainText.setText(text);
 			ctx.getRootContainer().add(plainText);
@@ -478,6 +488,8 @@ public class KindleNote extends AbstractKindlet {
 				"Название заметки: ", dt,new InputDialogListener() {
 
 			public void onClose(String arg0) {
+				if(arg0==null)
+					return;
 				File file = new File(ctx.getHomeDirectory(),arg0+".txt");
 				if(!file.exists())
 				{
