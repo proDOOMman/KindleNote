@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -97,15 +99,6 @@ public class KindleNote extends AbstractKindlet {
 		this.itemsList = new ArrayList();
 		this.northPanel = new KPanel(new BorderLayout());
 		this.northPanel.add(new KLabel("Фильтр: "),BorderLayout.WEST);
-		this.southImage = null;
-//		try {
-//			File f = new File(ctx.getHomeDirectory()+"/"+"keyboard.png");
-//			BufferedImage img = ImageIO.read(f);
-//			this.southImage = new KImage(img);
-//					KImage.ALIGN_CENTER,KImage.ALIGN_BOTTOM);
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
 		this.ctx = context;
 		this.pageLabel = new KLabel("KindleNote by proDOOMman",KLabel.CENTER);
 		this.pageLabel.setForeground(Color.white);
@@ -157,18 +150,52 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.menu.add(newItem);
-		this.menu.add("О программе", new ActionListener() {
+		this.menu.add("Управление", new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					KOptionPane.showMessageDialog(ctx.getRootContainer(),
-							"Программа KindleNote\nCopyleft proDOOMman 2011\nLicense: GPLv3\n" +
 							"Комбинации клавиш:\n" +
 							"Del - удалить заметку\n" +
 							"Enter - открыть заметку (первое нажатие - чтение, второе - редактирование)\n" +
 							"R - переименовать заметку\n" +
 							"E - редактировать заметку\n" +
 							"N - создать заметку\n" +
-							"Back - возврат в предыдущее меню",
+							"Back - возврат в предыдущее меню\n" +
+							"Shift+Space - переключить раскладку",
+							new MessageDialogListener(){
+								public void onClose() {
+									//nothing
+								}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		this.menu.add("Справка", new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					KOptionPane.showMessageDialog(ctx.getRootContainer(),
+							"Hints:\n" +
+							"* настройки альтернативной раскладки хранится в файле keyboard.txt\n" +
+							"* файл keyboard.png будет отображаться во время редактирования в качестве подсказки раскладки\n" +
+							"Данные файлы следует распологать в директории\n" +
+							"(/mnt/us/)developer/KindleNote/work/",
+							new MessageDialogListener(){
+								public void onClose() {
+									//nothing
+								}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		this.menu.add("О программе", new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					KOptionPane.showMessageDialog(ctx.getRootContainer(),
+							"Программа KindleNote\nCopyleft proDOOMman 2011\nLicense: GPLv3",
 							new MessageDialogListener(){
 								public void onClose() {
 									//nothing
@@ -291,6 +318,19 @@ public class KindleNote extends AbstractKindlet {
 
 	public void start() {
 		new Controller(ctx.getHomeDirectory().getAbsolutePath()); // physkeybru
+		this.southImage = null;
+		{
+			File f = new File(ctx.getHomeDirectory()+"/"+"keyboard.png");
+			if(f.exists())
+			{
+				Image img = Toolkit.getDefaultToolkit().createImage(
+						ctx.getHomeDirectory().getAbsolutePath()+"/keyboard.png");
+				this.southImage = new KImage(img,
+						KImage.ALIGN_CENTER,KImage.ALIGN_BOTTOM);
+			}
+			else
+				this.southImage = null;
+		}
 		try {
 			ctx.getProgressIndicator().setIndeterminate(true);
 			ctx.getProgressIndicator().setString("Запуск...");
@@ -462,6 +502,7 @@ public class KindleNote extends AbstractKindlet {
 		openFile(filename);
 		ctx.getRootContainer().remove(plainText);
 		textEdit.setText(plainText.getText());
+		ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
 		ctx.getRootContainer().add(textEdit);
 		textEdit.requestFocus();
 	}
