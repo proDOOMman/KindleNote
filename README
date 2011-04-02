@@ -1,3 +1,4 @@
+-=RU=-
 1) Установливаем Jailbreak (http://www.the-ebook.org/forum/viewtopic.php?t=17874)
 2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.2.zip).
 3) Подключаем Kindle к компьютеру и копируем KindleNote.azw2 в папку documents, а соответствующий* файл из архива developer-keystore-installer.zip - в корневую директорию (ну как и любой хак, вы же поняли).
@@ -17,3 +18,14 @@
 В случае обнаружения баги идем в раздел https://github.com/proDOOMman/KindleNote/issues, где подробно описываем возникшую ошибку, процесс установки, версию устройства, прошивки, установленные хаки и прилагаем файлы dev-key/install.log (он появляется после установки developer-keystore-installer) и develop/KindleNote/work/crash.log (если есть), живущие на киндле
 Если у вас нет аккаунта на гитхабе и по каким-то причинам вы не можете (или не хотите) его создать - можно просто отписаться на форуме http://www.the-ebook.org/forum/viewtopic.php?t=18846, приложив ту же информацию
 Фичареквесты принимаются по тем же адресам
+
+-=EN=-
+Installion
+1) Install Jailbreak
+2) Download KindleNote_en.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote_en.azw2) and developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.2.zip)
+3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.2.N_${version}_install.bin to root directory.
+4) Home->Menu->Settings->Menu->Update Your Kindle
+5) Kindle restarting
+6) Start KindleNote
+7) ...
+8) PROFIT!

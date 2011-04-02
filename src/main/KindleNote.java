@@ -65,7 +65,6 @@ import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
 import com.amazon.kindle.kindlet.ui.KTextOptionPane;
 import com.amazon.kindle.kindlet.ui.border.KLineBorder;
 import com.amazon.kindle.kindlet.ui.pages.PageProviders;
-import com.ibm.icu.impl.data.ResourceReader;
 
 public class KindleNote extends AbstractKindlet {
 
