@@ -8,6 +8,8 @@
 7) ...
 8) PROFIT!
 
+ВНИМАНИЕ! Не гарантируется работа на Kindle 3 с прошивкой древнее 3.1
+
 *соответствующий - из файлов вида update_dev-key_0.2.N_${version}_install.bin (где “${version}” – обозначение модели ридера) выберите тот, что соответствует вашей модели:
 - k3w - Kindle 3 Wi-Fi [B008]
 - k3g - Kindle 3G [B006]
@@ -29,3 +31,5 @@ Installion
 6) Start KindleNote
 7) ...
 8) PROFIT!
+
+CAUTION! This applet may be not work on Kindle 3 with firmware older then 3.1
