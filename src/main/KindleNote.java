@@ -400,10 +400,11 @@ public class KindleNote extends AbstractKindlet {
 						plainText.setFont(new Font(plainText.getFont().getName(),
 						plainText.getFont().getStyle(),
 						fontSize));
+						plainText.repaint();
 						textEdit.setFont(new Font(textEdit.getFont().getName(),
 								textEdit.getFont().getStyle(),
 								fontSize));
-						ctx.setSubTitle(String.valueOf(fontSize));
+						textEdit.repaint();
 					}
 				}
 			});
