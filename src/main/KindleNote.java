@@ -21,6 +21,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
@@ -53,14 +57,17 @@ import com.amazon.kindle.kindlet.ui.KLabelMultiline;
 import com.amazon.kindle.kindlet.ui.KMenu;
 import com.amazon.kindle.kindlet.ui.KMenuItem;
 import com.amazon.kindle.kindlet.ui.KOptionPane;
-import com.amazon.kindle.kindlet.ui.KPagedContainer;
 import com.amazon.kindle.kindlet.ui.KOptionPane.ConfirmDialogListener;
 import com.amazon.kindle.kindlet.ui.KOptionPane.InputDialogListener;
 import com.amazon.kindle.kindlet.ui.KOptionPane.MessageDialogListener;
+import com.amazon.kindle.kindlet.ui.KPagedContainer;
 import com.amazon.kindle.kindlet.ui.KPages;
 import com.amazon.kindle.kindlet.ui.KPanel;
 import com.amazon.kindle.kindlet.ui.KTextArea;
 import com.amazon.kindle.kindlet.ui.KTextField;
+import com.amazon.kindle.kindlet.ui.KTextOptionFontMenu;
+import com.amazon.kindle.kindlet.ui.KTextOptionListMenu;
+import com.amazon.kindle.kindlet.ui.KTextOptionMenuItem;
 import com.amazon.kindle.kindlet.ui.KTextOptionOrientationMenu;
 import com.amazon.kindle.kindlet.ui.KTextOptionPane;
 import com.amazon.kindle.kindlet.ui.border.KLineBorder;
@@ -86,10 +93,25 @@ public class KindleNote extends AbstractKindlet {
 	private KImage southImage;
 	private KPanel northPanel;
 	private ResourceBundle i18n;
+	private List avaliableLangs;
+	private String currentlang;
+	private KTextOptionListMenu langsList;
+	private int font1size;
+	private int font2size;
+	private int font3size;
 	
 	public void create(KindletContext context) {
-//		i18n = ResourceBundle.getBundle("lang/lang", new Locale("ru"));
-		i18n = ResourceBundle.getBundle("lang/lang", new Locale("en"));
+		avaliableLangs = new ArrayList();
+		avaliableLangs.add("ru");
+		avaliableLangs.add("en");
+		char[] data = context.getSecureStorage().getChars("lang");
+		if(data!=null)
+			currentlang = String.valueOf(data);
+		else
+			currentlang = "ru";
+		if(!avaliableLangs.contains(currentlang))
+			currentlang = "ru";
+		i18n = ResourceBundle.getBundle("lang/lang", new Locale(currentlang));
 		this.itemsList = new ArrayList();
 		this.northPanel = new KPanel(new BorderLayout());
 		this.northPanel.add(new KLabel(i18n.getString("filter")),BorderLayout.WEST);
@@ -196,7 +218,24 @@ public class KindleNote extends AbstractKindlet {
 		});
 		this.menu.add(tempItem);
 		this.ctx.setMenu(this.menu);
-		this.textEdit = new KTextArea();
+		this.textEdit = new KTextArea(){
+			private static final long serialVersionUID = 745146258399462745L;
+
+			protected void processFocusEvent(FocusEvent e) {
+				FocusListener[] listeners = getFocusListeners();
+				for (int j = 0; j < listeners.length; j++) {
+					int id = e.getID();
+					switch (id) {
+					case FocusEvent.FOCUS_GAINED:
+						listeners[j].focusGained(e);
+						break;
+					case FocusEvent.FOCUS_LOST:
+						listeners[j].focusLost(e);
+						break;
+					}
+				}
+			}
+		};
 		this.textEdit.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KindleKeyCodes.VK_BACK)
@@ -324,6 +363,30 @@ public class KindleNote extends AbstractKindlet {
 			ctx.getProgressIndicator().setIndeterminate(true);
 			ctx.getProgressIndicator().setString(i18n.getString("start"));
 			KTextOptionPane pane = new KTextOptionPane();
+			langsList = new KTextOptionListMenu("Language");
+			ListIterator langIterator = avaliableLangs.listIterator(avaliableLangs.size());
+			while (langIterator.hasPrevious())
+			{
+				String s = (String) langIterator.previous();
+				KTextOptionMenuItem item = new KTextOptionMenuItem(s);
+				langsList.add(item);
+				if(s.equals(currentlang))
+					langsList.setSelected(item);
+			}
+			langsList.addItemListener(new ItemListener(){
+				public void itemStateChanged(ItemEvent arg0) {
+					if(arg0.getStateChange()==ItemEvent.SELECTED)
+						ctx.getSecureStorage().putChars("lang", arg0.getItem().toString().toCharArray());
+				}
+			});
+			KTextOptionFontMenu fontSizeMenu = new KTextOptionFontMenu();
+			fontSizeMenu.addItemListener(new ItemListener(){
+				public void itemStateChanged(ItemEvent e) {
+					
+				}
+			});
+			pane.addFontSizeMenu(fontSizeMenu);
+			pane.addListMenu(langsList);
 			pane.addOrientationMenu(new KTextOptionOrientationMenu());
 			ctx.setTextOptionPane(pane);
 			File f = ctx.getHomeDirectory();
