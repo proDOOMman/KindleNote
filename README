@@ -23,7 +23,7 @@
 Installion
 1) Install Jailbreak
 2) Download KindleNote_en.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote_en.azw2) and developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.2.zip)
-3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.2.N_${version}_install.bin to root directory.
+3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.2.N_${version}_install.bin to root directory. Also put your favorite keyboard.txt or keyboard_european.txt to (/mnt/us/)developer/KindleNote/work
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle restarting
 6) Start KindleNote
