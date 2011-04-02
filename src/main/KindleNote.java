@@ -17,6 +17,7 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -96,9 +97,8 @@ public class KindleNote extends AbstractKindlet {
 	private List avaliableLangs;
 	private String currentlang;
 	private KTextOptionListMenu langsList;
-	private int font1size;
-	private int font2size;
-	private int font3size;
+	private int fontSize;
+	private KTextOptionFontMenu fontSizeMenu;
 	
 	public void create(KindletContext context) {
 		avaliableLangs = new ArrayList();
@@ -111,6 +111,11 @@ public class KindleNote extends AbstractKindlet {
 			currentlang = "ru";
 		if(!avaliableLangs.contains(currentlang))
 			currentlang = "ru";
+		char[] data2 = context.getSecureStorage().getChars("fontSize");
+		if(data2!=null && data2!=data)
+			fontSize = Integer.parseInt(String.valueOf(data2));
+		else
+			fontSize = 21;
 		i18n = ResourceBundle.getBundle("lang/lang", new Locale(currentlang));
 		this.itemsList = new ArrayList();
 		this.northPanel = new KPanel(new BorderLayout());
@@ -236,6 +241,9 @@ public class KindleNote extends AbstractKindlet {
 				}
 			}
 		};
+		this.textEdit.setFont(new Font(textEdit.getFont().getName(),
+				textEdit.getFont().getStyle(),
+				fontSize));
 		this.textEdit.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KindleKeyCodes.VK_BACK)
@@ -302,6 +310,9 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.plainText = new KLabelMultiline();
+		this.plainText.setFont(new Font(plainText.getFont().getName(),
+				plainText.getFont().getStyle(),
+				fontSize));
 		this.plainText.setFocusable(true);
 		this.plainText.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent arg0) {
@@ -379,10 +390,21 @@ public class KindleNote extends AbstractKindlet {
 						ctx.getSecureStorage().putChars("lang", arg0.getItem().toString().toCharArray());
 				}
 			});
-			KTextOptionFontMenu fontSizeMenu = new KTextOptionFontMenu();
+			fontSizeMenu = new KTextOptionFontMenu(fontSize);
 			fontSizeMenu.addItemListener(new ItemListener(){
 				public void itemStateChanged(ItemEvent e) {
-					
+					if(e.getStateChange()==ItemEvent.SELECTED)
+					{
+						fontSize = fontSizeMenu.getSelectedFontSize();
+						ctx.getSecureStorage().putChars("fontSize", String.valueOf(fontSize).toCharArray());
+						plainText.setFont(new Font(plainText.getFont().getName(),
+						plainText.getFont().getStyle(),
+						fontSize));
+						textEdit.setFont(new Font(textEdit.getFont().getName(),
+								textEdit.getFont().getStyle(),
+								fontSize));
+						ctx.setSubTitle(String.valueOf(fontSize));
+					}
 				}
 			});
 			pane.addFontSizeMenu(fontSizeMenu);
