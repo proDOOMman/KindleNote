@@ -473,6 +473,8 @@ public class KindleNote extends AbstractKindlet {
 					item2rename = (KFakeMenuItem)e.getSource();
 					KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("new"), item2rename.getText(), new InputDialogListener() {
 						public void onClose(String arg0) {
+							if(arg0==null)
+								return;
 							File f = new File(ctx.getHomeDirectory(),item2rename.getText()+".txt");
 							if(f.renameTo(new File(ctx.getHomeDirectory(),arg0+".txt")))
 								item2rename.setMText(arg0);
