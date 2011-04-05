@@ -247,7 +247,7 @@ public class KindleNote extends AbstractKindlet {
 				{
 					Date dtn = new Date();
 				    SimpleDateFormat formatter1 = new SimpleDateFormat(
-				        "dd.MM.yyyy hh:mm");
+				        "dd.MM.yyyy HH:mm");
 				    String dt=formatter1.format(dtn);
 				    String s = textEdit.getText();
 				    int pos = textEdit.getCaretPosition();
@@ -622,7 +622,7 @@ public class KindleNote extends AbstractKindlet {
 	public void newItem(){
 		Date dtn = new Date();
 	    SimpleDateFormat formatter1 = new SimpleDateFormat(
-	        "dd.MM.yyyy hh-mm");
+	        "dd.MM.yyyy HH-mm");
 	    String dt=formatter1.format(dtn);
 		KOptionPane.showInputDialog(ctx.getRootContainer(),
 				i18n.getString("new_note_name"), dt,new InputDialogListener() {

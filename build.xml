@@ -382,7 +382,7 @@
 	   	
 				<exec executable="scp">
 						<arg line="${env_buildDir}/${app_name}.azw2
-								root@192.168.0.105:/mnt/us/documents"/>
+								root@192.168.0.102:/mnt/us/documents"/>
 				</exec>
 
 	   </target>
