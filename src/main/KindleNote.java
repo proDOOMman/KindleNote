@@ -241,6 +241,28 @@ public class KindleNote extends AbstractKindlet {
 				}
 			}
 		};
+		this.textEdit.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {
+				if((e.getKeyChar()=='D'||e.getKeyChar()=='d')&&((e.getModifiersEx()&KeyEvent.ALT_DOWN_MASK)!=0))
+				{
+					Date dtn = new Date();
+				    SimpleDateFormat formatter1 = new SimpleDateFormat(
+				        "dd.MM.yyyy hh:mm");
+				    String dt=formatter1.format(dtn);
+				    String s = textEdit.getText();
+				    int pos = textEdit.getCaretPosition();
+					textEdit.setText(s.substring(0, pos)+dt+s.substring(pos, s.length()));
+					textEdit.setCaretPosition(pos+dt.length());
+					textEdit.repaint();
+				}
+			}
+			
+			public void keyReleased(KeyEvent e) {
+			}
+			
+			public void keyPressed(KeyEvent e) {
+			}
+		});
 		this.textEdit.setFont(new Font(textEdit.getFont().getName(),
 				textEdit.getFont().getStyle(),
 				fontSize));
