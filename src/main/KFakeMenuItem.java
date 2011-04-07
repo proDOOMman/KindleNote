@@ -14,8 +14,10 @@
 
 package main;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -43,21 +45,11 @@ public class KFakeMenuItem extends KLabel {
 		this.setFocusable(true);
 		this.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent arg0) {
-				if(m_text.length()>maxLen)
-					setText(m_text.substring(0, maxLen-3)+"...");
-				else
-					setText(m_text);
 				setFont(new Font(getFont().getName(),Font.PLAIN,28));
 				Toolkit.getDefaultToolkit().getSystemEventQueue(). postEvent(
 						new ActionEvent(self(), ActionEvent.ACTION_PERFORMED, "F0"));
 			}
 			public void focusGained(FocusEvent arg0) {
-				setFont(new Font(getFont().getName(),Font.BOLD,28));
-				if(m_text.length()>maxLen-2)
-					setText("-> "+m_text.substring(0, maxLen-5)+"...");
-				else
-					setText("-> "+m_text);
-
 				Toolkit.getDefaultToolkit().getSystemEventQueue(). postEvent(
 						new ActionEvent(self(), ActionEvent.ACTION_PERFORMED, "F1"));
 			}
@@ -124,19 +116,18 @@ public class KFakeMenuItem extends KLabel {
 	public void setMText(String text)
 	{
 		m_text = text;
-		if(this.hasFocus())
-		{
-			if(m_text.length()>maxLen-2)
-				setText("-> "+m_text.substring(0, maxLen-5)+"...");
-			else
-				setText("-> "+m_text);
-		}
+		if(m_text.length()>maxLen)
+			setText(m_text.substring(0, maxLen-2)+"...");
 		else
-		{
-			if(m_text.length()>maxLen)
-				setText(m_text.substring(0, maxLen-2)+"...");
-			else
-				setText(m_text);
-		}
+			setText(m_text);
 	}
+	
+    public void paint(Graphics g) {
+        super.paint(g);
+        if (this.isFocusOwner()) {
+            int y = super.getSize().height - 6;
+            g.setColor(Color.BLACK);
+                g.fillRect(5, y + 2, this.getWidth() - 11, 3);
+        }
+    }
 }
