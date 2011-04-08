@@ -65,10 +65,16 @@ logmsg "I" "update" "Keystore before installion:"
 ls -lha /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
 md5sum /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
 
-update_percent_complete 30
-
 update_percent_complete 51
-mv -f developer.keystore /var/local/java/keystore/developer.keystore
+if [ -f /var/local/java/keystore/developer.keystore ]; then
+	BAKFILE=developer.keystore-`date +%s`
+	cp -f /var/local/java/keystore/developer.keystore /var/local/java/keystore/$BAKFILE
+	/usr/local/bin/java -jar mergekeystore.jar /var/local/java/keystore/developer.keystore kindlenote.keystore
+	logmsg "I" "update" "Keys installed, backup in $BAKFILE"
+else
+	/usr/local/bin/java -jar mergekeystore.jar /var/local/java/keystore/developer.keystore kindlenote.keystore
+	logmsg "I" "update" "Keys installed"
+fi
 
 logmsg "I" "update" "Keystore after installion:"
 ls -lha /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1

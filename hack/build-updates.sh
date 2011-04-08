@@ -2,13 +2,13 @@
 
 HACKNAME="dev-key"
 PKGNAME="${HACKNAME##*link}"
-PKGVER="0.2.N"
+PKGVER="0.3.N"
 
 KINDLE_MODELS="k2 k2i dx dxi dxg k3g k3w k3gb"
 
 #Clearing dir with old files:
 rm -f ./build/*
-cp -f ../keystore/developer.keystore .
+cp -f ../keystore/developer.keystore ./kindlenote.keystore
 
 # Archive custom directory
 #tar --exclude="*.svn" -cvzf ${HACKNAME}.tar.gz ../src/${HACKNAME}
@@ -18,7 +18,7 @@ for model in ${KINDLE_MODELS} ; do
 	ARCH=${PKGNAME}_${PKGVER}_${model}
 
 	# Build install update
-	./kindle_update_tool.py m --${model} --sign ${ARCH}_install install.sh developer.keystore
+	./kindle_update_tool.py m --${model} --sign ${ARCH}_install install.sh kindlenote.keystore mergekeystore.jar
 
 	# Build uninstall update
 	./kindle_update_tool.py m --${model} --sign ${ARCH}_uninstall uninstall.sh
@@ -30,4 +30,4 @@ done
 # Move our updates :)
 mv -f *.bin ./build/
 
-rm -f developer.keystore
+rm -f kindlenote.keystore
