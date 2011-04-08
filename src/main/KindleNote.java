@@ -579,93 +579,98 @@ public class KindleNote extends AbstractKindlet {
 	}
 	public void openFile(String filename)
 	{
-			currentFileName = ctx.getHomeDirectory().getAbsolutePath()+"/"+filename+".txt";
-			String text = new String();
-		    String str;
+		textEdit.setText("");
+		plainText.setText("");
+		currentFileName = ctx.getHomeDirectory().getAbsolutePath()+"/"+filename+".txt";
+		String text = new String();
+		String str;
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(currentFileName));
 			try {
-				BufferedReader in = new BufferedReader(new FileReader(currentFileName));
-				try {
-					while ((str = in.readLine()) != null) {
-						text = text + str + "\n";
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
+				while ((str = in.readLine()) != null) {
+					text = text + str + "\n";
 				}
-			    try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e) {
-				KOptionPane.showMessageDialog(null, i18n.getString("not_found"), new MessageDialogListener() {
-					
-					public void onClose() {
-						//nothing
-					}
-				});
+			} catch (IOException e) {
 				e.printStackTrace();
-				return;
 			}
-			if(text.startsWith(aes_start))
-			{
-				current_encrypted = true;
-				read_only = true;
-				tmp_text = text;
-				KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("password"), "", new InputDialogListener() {
-					public void onClose(String arg0) {
-						if(arg0==null)
-						{
-							current_password = null;
-							current_encrypted = false;
-							plainText.setText(tmp_text);
-							return;
-						}
-						else
-							current_password = arg0;
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			KOptionPane.showMessageDialog(null, i18n.getString("not_found"), new MessageDialogListener() {
 
-						if(tmp_text.length()<aes_start.length()+2)//new encrypted file
+				public void onClose() {
+					//nothing
+				}
+			});
+			e.printStackTrace();
+			return;
+		}
+		if(text.startsWith(aes_start))
+		{
+			current_encrypted = true;
+			read_only = true;
+			tmp_text = text;
+			KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("password"), "", new InputDialogListener() {
+				public void onClose(String arg0) {
+					if(arg0==null)
+					{
+						current_password = null;
+						current_encrypted = false;
+						plainText.setText(tmp_text);
+						return;
+					}
+					else
+						current_password = arg0;
+
+					if(tmp_text.length()<aes_start.length()+2)//new encrypted file
+					{
+						tmp_text = "";
+						read_only = false;
+					}
+					else
+					{
+						try{
+							tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
+						}
+						catch(Exception e)
 						{
-							tmp_text = "";
+							read_only = true;
+							e.printStackTrace();
+						}
+						try{
+							String decrypted = new String(decrypt(1, current_password, fromBase64(tmp_text)));
+							tmp_text = decrypted;
 							read_only = false;
 						}
-						else if(tmp_text!=null && current_encrypted)
-							try {
-								tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
-								try{
-									String decrypted = new String(decrypt(1, current_password, fromBase64(tmp_text)));
-									tmp_text = decrypted;
-									read_only = false;
-								}
-								catch(Exception e)
-								{
-									e.printStackTrace();
-									tmp_text = i18n.getString("wrong_pass");
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						plainText.setText(tmp_text);
-						plainText.repaint();
-						textEdit.setText(tmp_text);
-						textEdit.repaint();
-						tmp_text = null;
+						catch(Exception e)
+						{
+							e.printStackTrace();
+							tmp_text = i18n.getString("wrong_pass");
+						}
 					}
-				});
-			}
-			else
-			{
-				current_encrypted = false;
-				current_password = null;
-				read_only = false;
-			}
-			if(!current_encrypted)
-				plainText.setText(text);
-			else
-				plainText.setText("");
-			this.newItem.setEnabled(false);
-			this.newSecureItem.setEnabled(false);
-			ctx.setSubTitle(filename);
+					plainText.setText(tmp_text);
+					plainText.repaint();
+					textEdit.setText(tmp_text);
+					textEdit.repaint();
+					tmp_text = null;
+				}
+			});
+		}
+		else
+		{
+			current_encrypted = false;
+			current_password = null;
+			read_only = false;
+			plainText.setText(text);
+		}
+		this.newItem.setEnabled(false);
+		this.newSecureItem.setEnabled(false);
+		ctx.setSubTitle(filename);
 	}
+
 	public void openAndShowFile(String filename)
 	{
 		openFile(filename);
