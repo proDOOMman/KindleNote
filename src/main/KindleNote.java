@@ -503,7 +503,7 @@ public class KindleNote extends AbstractKindlet {
 				String fname = e.getActionCommand().substring(1,e.getActionCommand().length());
 				if(e.getActionCommand().startsWith("E")) //открыть на чтение
 				{
-					openFile(fname);
+					openAndShowFile(fname);
 					lastFocus = (KFakeMenuItem)e.getSource();
 				}
 				else if(e.getActionCommand().startsWith("W"))//Открыть на запись
@@ -617,6 +617,7 @@ public class KindleNote extends AbstractKindlet {
 						{
 							current_password = null;
 							current_encrypted = false;
+							plainText.setText(tmp_text);
 							return;
 						}
 						else
@@ -657,25 +658,31 @@ public class KindleNote extends AbstractKindlet {
 				current_password = null;
 				read_only = false;
 			}
-			this.newItem.setEnabled(false);
-			this.newItem.setEnabled(false);
-			ctx.getRootContainer().remove(this.homeMenu);
-			ctx.getRootContainer().remove(this.northPanel);
-			ctx.getRootContainer().remove(this.pageLabel);
 			if(!current_encrypted)
 				plainText.setText(text);
 			else
 				plainText.setText("");
-			ctx.getRootContainer().add(plainText);
-			plainText.requestFocus();
+			this.newItem.setEnabled(false);
+			this.newSecureItem.setEnabled(false);
 			ctx.setSubTitle(filename);
+	}
+	public void openAndShowFile(String filename)
+	{
+		openFile(filename);
+		ctx.getRootContainer().remove(this.homeMenu);
+		ctx.getRootContainer().remove(this.northPanel);
+		ctx.getRootContainer().remove(this.pageLabel);
+		ctx.getRootContainer().add(plainText);
+		plainText.requestFocus();
 	}
 	public void openAndEditFile(String filename)
 	{
 		textIsNew = true;
 		openFile(filename);
-		ctx.getRootContainer().remove(plainText);
 		textEdit.setText(plainText.getText());
+		ctx.getRootContainer().remove(this.homeMenu);
+		ctx.getRootContainer().remove(this.northPanel);
+		ctx.getRootContainer().remove(this.pageLabel);
 		ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
 		ctx.getRootContainer().add(textEdit);
 		textEdit.requestFocus();
