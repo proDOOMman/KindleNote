@@ -391,6 +391,15 @@ public class KindleNote extends AbstractKindlet {
 
 	public void start() {
 		new Controller(ctx.getHomeDirectory().getAbsolutePath()); // physkeybru
+		File crash_file = new File(ctx.getHomeDirectory(),"crash.log");
+		if(crash_file.exists())
+		{
+			Date dtn = new Date();
+		    SimpleDateFormat formatter1 = new SimpleDateFormat(
+		        "dd.MM.yyyy HH-mm");
+		    String dt=formatter1.format(dtn);
+			crash_file.renameTo(new File(ctx.getHomeDirectory(),"crash.log-"+dt+".txt"));
+		}
 		this.southImage = null;
 		{
 			File f = new File(ctx.getHomeDirectory()+"/"+"keyboard.png");
@@ -476,14 +485,6 @@ public class KindleNote extends AbstractKindlet {
 				addHomeItem(noteName);
 			}
 			ctx.getRootContainer().add(this.homeMenu);
-			if((new File(ctx.getHomeDirectory(),"crash.log")).exists())
-			{
-				KOptionPane.showMessageDialog(ctx.getRootContainer(), i18n.getString("crash_found"), new MessageDialogListener() {
-					public void onClose() {
-						//nothing
-					}
-				});
-			}
 			ctx.getProgressIndicator().setIndeterminate(false);
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -661,7 +662,7 @@ public class KindleNote extends AbstractKindlet {
 			ctx.getRootContainer().remove(this.homeMenu);
 			ctx.getRootContainer().remove(this.northPanel);
 			ctx.getRootContainer().remove(this.pageLabel);
-			if(current_encrypted)
+			if(!current_encrypted)
 				plainText.setText(text);
 			else
 				plainText.setText("");
