@@ -76,7 +76,6 @@ public class Base64Coder {
 	public static String encodeLines (byte[] in, int iOff, int iLen, int lineLen, String lineSeparator) {
 		int blockLen = (lineLen*3) / 4;
 		if (blockLen <= 0) throw new IllegalArgumentException();
-		int lines = (iLen+blockLen-1) / blockLen;
 		String buf = new String();
 		int ip = 0;
 		while (ip < iLen) {

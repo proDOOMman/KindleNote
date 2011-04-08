@@ -110,6 +110,7 @@ public class KindleNote extends AbstractKindlet {
 	private boolean current_encrypted = false;
 	private final String aes_start = "====== AES ENCRYPTED FILE ======\n";
 	private String tmp_text;
+	private boolean read_only = false;
 	
 	public void create(KindletContext context) {
 		avaliableLangs = new ArrayList();
@@ -358,20 +359,25 @@ public class KindleNote extends AbstractKindlet {
 					ctx.setSubTitle("");
 					currentFileName = "";
 					newItem.setEnabled(true);
+					newSecureItem.setEnabled(true);
 					homeMenu.requestFocus();
 					lastFocus.requestFocus();
 					arg0.consume();
 					current_encrypted = false;
 					current_password = null;
+					read_only = false;
 				}
 				else// if(arg0.getKeyCode() == KindleKeyCodes.VK_FIVE_WAY_SELECT)
 				{
-					ctx.getRootContainer().remove(plainText);
-					textEdit.setText(plainText.getText());
-					ctx.getRootContainer().add(textEdit);
-					if(southImage!=null)
-						ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
-					textEdit.requestFocus();
+					if(!read_only)
+					{
+						ctx.getRootContainer().remove(plainText);
+						textEdit.setText(plainText.getText());
+						ctx.getRootContainer().add(textEdit);
+						if(southImage!=null)
+							ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
+						textEdit.requestFocus();
+					}
 				}
 			}
 			public void keyPressed(KeyEvent arg0) {
@@ -594,6 +600,7 @@ public class KindleNote extends AbstractKindlet {
 			if(text.startsWith(aes_start))
 			{
 				current_encrypted = true;
+				read_only = true;
 				tmp_text = text;
 				KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("password"), "", new InputDialogListener() {
 					public void onClose(String arg0) {
@@ -609,7 +616,16 @@ public class KindleNote extends AbstractKindlet {
 						if(tmp_text!=null && current_encrypted)
 							try {
 								tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
-								tmp_text = new String(decrypt(1, current_password, hexStringToByteArray(tmp_text)));
+								try{
+									String decrypted = new String(decrypt(1, current_password, fromBase64(tmp_text)));
+									tmp_text = decrypted;
+									read_only = false;
+								}
+								catch(Exception e)
+								{
+									e.printStackTrace();
+									tmp_text = "WRONG PASS!";
+								}
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -625,7 +641,9 @@ public class KindleNote extends AbstractKindlet {
 			{
 				current_encrypted = false;
 				current_password = null;
+				read_only = false;
 			}
+			this.newItem.setEnabled(false);
 			this.newItem.setEnabled(false);
 			ctx.getRootContainer().remove(this.homeMenu);
 			ctx.getRootContainer().remove(this.northPanel);
@@ -650,23 +668,7 @@ public class KindleNote extends AbstractKindlet {
 	}
 	public void stop() {
 		if(textEdit.hasFocus())
-		{
-			try {
-				FileWriter outFile = new FileWriter(currentFileName);
-				PrintWriter out = new PrintWriter(outFile);
-				String text = textEdit.getText();
-				if(current_encrypted)
-					text = aes_start+new String(encrypt(1, current_password, text.getBytes()));
-				out.print(text);
-				out.close();
-				current_encrypted = false;
-				current_password = null;
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+			saveFile();
 		super.stop();
 	}
 	public void newItem(){
@@ -695,6 +697,7 @@ public class KindleNote extends AbstractKindlet {
 		});
 	}
 	public void newSecureItem(){
+		current_encrypted = true;
 		Date dtn = new Date();
 	    SimpleDateFormat formatter1 = new SimpleDateFormat(
 	        "dd.MM.yyyy HH-mm");
@@ -796,6 +799,8 @@ public class KindleNote extends AbstractKindlet {
 
 	public void saveFile()
 	{
+		if(read_only)
+			return;
 		try {
 			String text = textEdit.getText();
 			FileWriter outFile = new FileWriter(currentFileName);
@@ -803,7 +808,7 @@ public class KindleNote extends AbstractKindlet {
 			if(current_encrypted)
 			{
 				byte[] enc = encrypt(1, current_password, text.getBytes());
-				text = aes_start+asHex(enc);
+				text = aes_start+tobase64(enc);
 			}
 			out.print(text);
 			out.close();
@@ -814,11 +819,11 @@ public class KindleNote extends AbstractKindlet {
 		}
 	}
 	
-	public byte[] hexStringToByteArray(String s) {
+	public byte[] fromBase64(String s) {
 		return Base64Coder.decode(s);
 	}
 
-	public static String asHex (byte buf[]) {
+	public String tobase64(byte buf[]) {
 		return new String(Base64Coder.encode(buf));
 	}
 }
