@@ -38,6 +38,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.amazon.kindle.kindlet.AbstractKindlet;
 import com.amazon.kindle.kindlet.KindletContext;
@@ -83,6 +88,7 @@ public class KindleNote extends AbstractKindlet {
 	private String currentFileName;
 	private KMenu menu;
 	private KMenuItem newItem;
+	private KMenuItem newSecureItem;
 	private String file2del;
 	private KFakeMenuItem item2del;
 	private KFakeMenuItem lastFocus;
@@ -99,6 +105,11 @@ public class KindleNote extends AbstractKindlet {
 	private KTextOptionListMenu langsList;
 	private int fontSize;
 	private KTextOptionFontMenu fontSizeMenu;
+	private final byte[] salt = "Uv1phie5Gie1ieph".getBytes();
+	private String current_password = null;
+	private boolean current_encrypted = false;
+	private final String aes_start = "====== AES ENCRYPTED FILE ======\n";
+	private String tmp_text;
 	
 	public void create(KindletContext context) {
 		avaliableLangs = new ArrayList();
@@ -171,6 +182,13 @@ public class KindleNote extends AbstractKindlet {
 			}
 		});
 		this.menu.add(newItem);
+		this.newSecureItem = new KMenuItem(i18n.getString("new_secure_note"));
+		this.newSecureItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				newSecureItem();
+			}
+		});
+		this.menu.add(newSecureItem);
 		KMenuItem tempItem = new KMenuItem(i18n.getString("control"));
 		tempItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -278,14 +296,7 @@ public class KindleNote extends AbstractKindlet {
 				{
 					if(textIsNew)
 					{
-						try {
-							FileWriter outFile = new FileWriter(currentFileName);
-							PrintWriter out = new PrintWriter(outFile);
-							out.print(textEdit.getText());
-							out.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						saveFile();
 						plainText.setText(textEdit.getText());
 						homeMenu.removeItem(lastFocus);
 						homeMenu.addItem(lastFocus, 0);
@@ -297,14 +308,7 @@ public class KindleNote extends AbstractKindlet {
 							public void onClose(int arg0) {
 								if(arg0 == KOptionPane.OK_OPTION)
 								{
-									try {
-										FileWriter outFile = new FileWriter(currentFileName);
-										PrintWriter out = new PrintWriter(outFile);
-										out.print(textEdit.getText());
-										out.close();
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
+									saveFile();
 									plainText.setText(textEdit.getText());
 									homeMenu.removeItem(lastFocus);
 									homeMenu.addItem(lastFocus, 0);
@@ -357,6 +361,8 @@ public class KindleNote extends AbstractKindlet {
 					homeMenu.requestFocus();
 					lastFocus.requestFocus();
 					arg0.consume();
+					current_encrypted = false;
+					current_password = null;
 				}
 				else// if(arg0.getKeyCode() == KindleKeyCodes.VK_FIVE_WAY_SELECT)
 				{
@@ -585,12 +591,49 @@ public class KindleNote extends AbstractKindlet {
 				e.printStackTrace();
 				return;
 			}
+			if(text.startsWith(aes_start))
+			{
+				current_encrypted = true;
+				tmp_text = text;
+				KOptionPane.showInputDialog(ctx.getRootContainer(), i18n.getString("password"), "", new InputDialogListener() {
+					public void onClose(String arg0) {
+						if(arg0==null)
+						{
+							current_password = null;
+							current_encrypted = false;
+							return;
+						}
+						else
+							current_password = arg0;
+
+						if(tmp_text!=null && current_encrypted)
+							try {
+								tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
+								tmp_text = new String(decrypt(1, current_password, hexStringToByteArray(tmp_text)));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						plainText.setText(tmp_text);
+						plainText.repaint();
+						textEdit.setText(tmp_text);
+						textEdit.repaint();
+						tmp_text = null;
+					}
+				});
+			}
+			else
+			{
+				current_encrypted = false;
+				current_password = null;
+			}
 			this.newItem.setEnabled(false);
 			ctx.getRootContainer().remove(this.homeMenu);
-//			ctx.getRootContainer().remove(this.searchField);
 			ctx.getRootContainer().remove(this.northPanel);
 			ctx.getRootContainer().remove(this.pageLabel);
-			plainText.setText(text);
+			if(current_encrypted)
+				plainText.setText(text);
+			else
+				plainText.setText("");
 			ctx.getRootContainer().add(plainText);
 			plainText.requestFocus();
 			ctx.setSubTitle(filename);
@@ -611,9 +654,16 @@ public class KindleNote extends AbstractKindlet {
 			try {
 				FileWriter outFile = new FileWriter(currentFileName);
 				PrintWriter out = new PrintWriter(outFile);
-				out.print(textEdit.getText());
+				String text = textEdit.getText();
+				if(current_encrypted)
+					text = aes_start+new String(encrypt(1, current_password, text.getBytes()));
+				out.print(text);
 				out.close();
+				current_encrypted = false;
+				current_password = null;
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -643,5 +693,132 @@ public class KindleNote extends AbstractKindlet {
 				openAndEditFile(arg0);
 			}
 		});
+	}
+	public void newSecureItem(){
+		Date dtn = new Date();
+	    SimpleDateFormat formatter1 = new SimpleDateFormat(
+	        "dd.MM.yyyy HH-mm");
+	    String dt=formatter1.format(dtn);
+		KOptionPane.showInputDialog(ctx.getRootContainer(),
+				i18n.getString("new_note_name"), dt,new InputDialogListener() {
+
+			public void onClose(String arg0) {
+				if(arg0==null)
+					return;
+				File file = new File(ctx.getHomeDirectory(),arg0+".txt");
+				if(!file.exists())
+				{
+					try {
+						file.createNewFile();
+						addHomeItem(arg0,0);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				try {
+					FileWriter outFile = new FileWriter(file);
+					PrintWriter out = new PrintWriter(outFile);
+					out.print(aes_start);
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				openAndEditFile(arg0);
+			}
+		});
+	}
+
+	public byte[] encrypt(
+			int iterations,
+			String password,
+			byte[] cleartext)
+	throws Exception
+	{
+		final MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
+		byte[] pw = password.getBytes("UTF-8");
+		for (int i = 0; i < iterations; i++)
+		{
+			final byte[] salted = new byte[pw.length + salt.length];
+			System.arraycopy(pw, 0, salted, 0, pw.length);
+			System.arraycopy(salt, 0, salted, pw.length, salt.length);
+			Arrays.fill(pw, (byte) 0x00);
+			shaDigest.reset();
+			pw = shaDigest.digest(salted);
+			Arrays.fill(salted, (byte) 0x00);
+		}
+		final byte[] key = new byte[16];
+		final byte[] iv = new byte[16];
+		System.arraycopy(pw, 0, key, 0, 16);
+		System.arraycopy(pw, 16, iv, 0, 16);
+		Arrays.fill(pw, (byte) 0x00);
+		final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		cipher.init(
+				Cipher.ENCRYPT_MODE,
+				new SecretKeySpec(key, "AES"),
+				new IvParameterSpec(iv));
+		Arrays.fill(key, (byte) 0x00);
+		Arrays.fill(iv, (byte) 0x00);
+		return cipher.doFinal(cleartext);
+	}
+
+	public byte[] decrypt(
+			int iterations,
+			String password,
+			byte[] ciphertext)
+	throws Exception
+	{
+		final MessageDigest shaDigest = MessageDigest.getInstance("SHA-256");
+		byte[] pw = password.getBytes("UTF-8");
+		for (int i = 0; i < iterations; i++)
+		{
+			final byte[] salted = new byte[pw.length + salt.length];
+			System.arraycopy(pw, 0, salted, 0, pw.length);
+			System.arraycopy(salt, 0, salted, pw.length, salt.length);
+			Arrays.fill(pw, (byte) 0x00);
+			shaDigest.reset();
+			pw = shaDigest.digest(salted);
+			Arrays.fill(salted, (byte) 0x00);
+		}
+		final byte[] key = new byte[16];
+		final byte[] iv = new byte[16];
+		System.arraycopy(pw, 0, key, 0, 16);
+		System.arraycopy(pw, 16, iv, 0, 16);
+		Arrays.fill(pw, (byte) 0x00);
+		final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		cipher.init(
+				Cipher.DECRYPT_MODE,
+				new SecretKeySpec(key, "AES"),
+				new IvParameterSpec(iv));
+		Arrays.fill(key, (byte) 0x00);
+		Arrays.fill(iv, (byte) 0x00);
+		return cipher.doFinal(ciphertext);
+	}
+
+	public void saveFile()
+	{
+		try {
+			String text = textEdit.getText();
+			FileWriter outFile = new FileWriter(currentFileName);
+			PrintWriter out = new PrintWriter(outFile);
+			if(current_encrypted)
+			{
+				byte[] enc = encrypt(1, current_password, text.getBytes());
+				text = aes_start+asHex(enc);
+			}
+			out.print(text);
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public byte[] hexStringToByteArray(String s) {
+		return Base64Coder.decode(s);
+	}
+
+	public static String asHex (byte buf[]) {
+		return new String(Base64Coder.encode(buf));
 	}
 }
