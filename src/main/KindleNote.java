@@ -476,6 +476,14 @@ public class KindleNote extends AbstractKindlet {
 				addHomeItem(noteName);
 			}
 			ctx.getRootContainer().add(this.homeMenu);
+			if((new File(ctx.getHomeDirectory(),"crash.log")).exists())
+			{
+				KOptionPane.showMessageDialog(ctx.getRootContainer(), i18n.getString("crash_found"), new MessageDialogListener() {
+					public void onClose() {
+						//nothing
+					}
+				});
+			}
 			ctx.getProgressIndicator().setIndeterminate(false);
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -613,7 +621,12 @@ public class KindleNote extends AbstractKindlet {
 						else
 							current_password = arg0;
 
-						if(tmp_text!=null && current_encrypted)
+						if(tmp_text.length()<aes_start.length()+2)//new encrypted file
+						{
+							tmp_text = "";
+							read_only = false;
+						}
+						else if(tmp_text!=null && current_encrypted)
 							try {
 								tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
 								try{
@@ -624,7 +637,7 @@ public class KindleNote extends AbstractKindlet {
 								catch(Exception e)
 								{
 									e.printStackTrace();
-									tmp_text = "WRONG PASS!";
+									tmp_text = i18n.getString("wrong_pass");
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
