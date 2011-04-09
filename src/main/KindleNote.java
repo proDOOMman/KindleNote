@@ -633,7 +633,8 @@ public class KindleNote extends AbstractKindlet {
 					else
 					{
 						try{
-							tmp_text = tmp_text.substring(aes_start.length(),tmp_text.indexOf("==",aes_start.length())+2);
+							tmp_text = tmp_text.substring(aes_start.length());
+							tmp_text = tmp_text.substring(0, tmp_text.length()-tmp_text.length()%4);
 						}
 						catch(Exception e)
 						{
