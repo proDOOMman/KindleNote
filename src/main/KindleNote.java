@@ -712,6 +712,7 @@ public class KindleNote extends AbstractKindlet {
 				File file = new File(ctx.getHomeDirectory(),arg0+".txt");
 				if(!file.exists())
 				{
+					textIsNew = true;
 					try {
 						file.createNewFile();
 						addHomeItem(arg0,0);
@@ -719,7 +720,6 @@ public class KindleNote extends AbstractKindlet {
 						e.printStackTrace();
 					}
 				}
-				textIsNew = true;
 				openAndEditFile(arg0);
 			}
 		});
@@ -739,6 +739,7 @@ public class KindleNote extends AbstractKindlet {
 				File file = new File(ctx.getHomeDirectory(),arg0+".txt");
 				if(!file.exists())
 				{
+					textIsNew = true;
 					try {
 						file.createNewFile();
 						FileWriter outFile = new FileWriter(file);
@@ -750,7 +751,6 @@ public class KindleNote extends AbstractKindlet {
 						e.printStackTrace();
 					}
 				}
-				textIsNew = true;
 				openAndEditFile(arg0);
 			}
 		});
