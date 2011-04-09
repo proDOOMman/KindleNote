@@ -683,13 +683,13 @@ public class KindleNote extends AbstractKindlet {
 	}
 	public void openAndEditFile(String filename)
 	{
-		textIsNew = true;
 		openFile(filename);
 		textEdit.setText(plainText.getText());
 		ctx.getRootContainer().remove(this.homeMenu);
 		ctx.getRootContainer().remove(this.northPanel);
 		ctx.getRootContainer().remove(this.pageLabel);
-		ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
+		if(southImage!=null)
+			ctx.getRootContainer().add(southImage,BorderLayout.SOUTH);
 		ctx.getRootContainer().add(textEdit);
 		textEdit.requestFocus();
 	}
@@ -719,6 +719,7 @@ public class KindleNote extends AbstractKindlet {
 						e.printStackTrace();
 					}
 				}
+				textIsNew = true;
 				openAndEditFile(arg0);
 			}
 		});
@@ -753,6 +754,7 @@ public class KindleNote extends AbstractKindlet {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				textIsNew = true;
 				openAndEditFile(arg0);
 			}
 		});
