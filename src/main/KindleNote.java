@@ -741,18 +741,14 @@ public class KindleNote extends AbstractKindlet {
 				{
 					try {
 						file.createNewFile();
+						FileWriter outFile = new FileWriter(file);
+						PrintWriter out = new PrintWriter(outFile);
+						out.print(aes_start);
+						out.close();
 						addHomeItem(arg0,0);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				}
-				try {
-					FileWriter outFile = new FileWriter(file);
-					PrintWriter out = new PrintWriter(outFile);
-					out.print(aes_start);
-					out.close();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
 				textIsNew = true;
 				openAndEditFile(arg0);
