@@ -1,4 +1,4 @@
-//This is a *modifed* part of physkeybru hack for Kindle
+//This is a *modified* part of physkeybru hack for Kindle
 //Logging disabled, and code influence only on this Kindlet
 
 package main;
@@ -60,7 +60,7 @@ public class Controller {
 				"T=Т\n" +
 				"Y=У\n" +
 				"U=И\n" +
-				"I=Ч\n" +
+				"I=Э\n" +
 				"O=О\n" +
 				"P=П\n" +
 				"A=А\n" +
@@ -68,7 +68,7 @@ public class Controller {
 				"D=Д\n" +
 				"F=Ф\n" +
 				"G=Г\n" +
-				"H=Ы\n" +
+				"H=Ч\n" +
 				"J=Ж\n" +
 				"K=К\n" +
 				"L=Л\n" +

@@ -39,7 +39,8 @@ public class KFakeMenuItem extends KLabel {
 
 	public void init()
 	{
-		this.setMinimumSize(new Dimension(600,20));// ???
+		this.setMinimumSize(new Dimension(600,20));// Don't work on DX-G
+//		this.setSize(new Dimension(600, 20));
 		this.setMargin(new Insets(10,10,10,10));
 		this.setFont(new Font(getFont().getName(),Font.PLAIN,28));
 		this.setFocusable(true);
