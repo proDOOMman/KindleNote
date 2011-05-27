@@ -82,10 +82,10 @@ md5sum /var/local/java/keystore/* >> /mnt/us/dev-key/install.log 2>&1
 
 update_percent_complete 66
 if [ `date +%Y%m` -lt 201104 ]; then
-logmsg "I" "update" "Date (`date`) if too old, fixing it"
-date 010100592013.30
+logmsg "I" "update" "Date if too old, fixing it"
+date 010100592013.30 >> /mnt/us/dev-key/install.log
 hwclock -w
-logmsg "I" "update" "Date set to `date`";
+logmsg "I" "update" "Date set to 1 Jan 2013";
 fi
 
 logmsg "I" "update" "done"
