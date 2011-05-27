@@ -1,7 +1,7 @@
 -=RU=-
 1) Установливаем Jailbreak (http://www.the-ebook.org/forum/viewtopic.php?t=17874)
-2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.3.zip).
-3) Подключаем Kindle к компьютеру и копируем KindleNote.azw2 в папку documents, а соответствующий* файл из архива developer-keystore-installer.zip - в корневую директорию (ну как и любой хак, вы же поняли).
+2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip).
+3) Подключаем Kindle к компьютеру и копируем KindleNote.azw2 в папку documents, а соответствующий* файл из архива update_dev-key_0.4.zip - в корневую директорию (ну как и любой хак, вы же поняли).
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle перезапускается
 6) Работаем с программой!
@@ -10,22 +10,22 @@
 
 ВНИМАНИЕ! Не гарантируется работа на Kindle 3 с прошивкой древнее 3.1
 
-*соответствующий - из файлов вида update_dev-key_0.2.N_${version}_install.bin (где “${version}” – обозначение модели ридера) выберите тот, что соответствует вашей модели:
+*соответствующий - из файлов вида update_dev-key_0.4.N_${version}_install.bin (где “${version}” – обозначение модели ридера) выберите тот, что соответствует вашей модели:
 - k3w - Kindle 3 Wi-Fi [B008]
 - k3g - Kindle 3G [B006]
 - k3gb - Kindle 3G UK [B00A]
 - и т.д.
 
 -----
-В случае обнаружения баги идем в раздел https://github.com/proDOOMman/KindleNote/issues, где подробно описываем возникшую ошибку, процесс установки, версию устройства, прошивки, установленные хаки и прилагаем файлы dev-key/install.log (он появляется после установки developer-keystore-installer) и develop/KindleNote/work/crash.log (если есть), живущие на киндле
+В случае обнаружения баги идем в раздел https://github.com/proDOOMman/KindleNote/issues, где подробно описываем возникшую ошибку, процесс установки, версию устройства, прошивки, установленные хаки и прилагаем файлы dev-key/install.log (он появляется после установки update_dev-key) и develop/KindleNote/work/crash.log (если есть), живущие на киндле
 Если у вас нет аккаунта на гитхабе и по каким-то причинам вы не можете (или не хотите) его создать - можно просто отписаться на форуме http://www.the-ebook.org/forum/viewtopic.php?t=18846, приложив ту же информацию
 Фичареквесты принимаются по тем же адресам
 
 -=EN=-
 Installion
 1) Install Jailbreak
-2) Download KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) and developer-keystore-installer.zip (https://github.com/downloads/proDOOMman/KindleNote/developer-keystore-installer-0.3.zip)
-3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.2.N_${version}_install.bin to root directory. Also put your favorite keyboard.txt or keyboard_european.txt to (/mnt/us/)developer/KindleNote/work
+2) Download KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) and update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip)
+3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.4.N_${version}_install.bin to root directory. Also put your favorite keyboard.txt or keyboard_european.txt to (/mnt/us/)developer/KindleNote/work
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle restarting
 6) Start KindleNote, select "en" language in "Aa" menu, press "Home" and start KindleNote again 

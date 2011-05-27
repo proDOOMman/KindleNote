@@ -2,7 +2,7 @@
 
 HACKNAME="dev-key"
 PKGNAME="${HACKNAME##*link}"
-PKGVER="0.3.N"
+PKGVER="0.4.N"
 
 KINDLE_MODELS="k2 k2i dx dxi dxg k3g k3w k3gb"
 
