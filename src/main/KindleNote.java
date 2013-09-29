@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.KeyboardFocusManager;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -242,24 +243,15 @@ public class KindleNote extends AbstractKindlet {
 		});
 		this.menu.add(tempItem);
 		this.ctx.setMenu(this.menu);
-		this.textEdit = new KTextArea(){
-			private static final long serialVersionUID = 745146258399462745L;
-
-			protected void processFocusEvent(FocusEvent e) {
-				FocusListener[] listeners = getFocusListeners();
-				for (int j = 0; j < listeners.length; j++) {
-					int id = e.getID();
-					switch (id) {
-					case FocusEvent.FOCUS_GAINED:
-						listeners[j].focusGained(e);
-						break;
-					case FocusEvent.FOCUS_LOST:
-						listeners[j].focusLost(e);
-						break;
-					}
-				}
+		this.textEdit = new KTextArea();
+		this.textEdit.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().dispatchEvent(new KeyEvent(textEdit, java.awt.event.KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KindleKeyCodes.VK_FIVE_WAY_RIGHT, (char) 65535));
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().dispatchEvent(new KeyEvent(textEdit, java.awt.event.KeyEvent.KEY_RELEASED, System.currentTimeMillis(), 0, KindleKeyCodes.VK_FIVE_WAY_RIGHT, (char) 65535));
 			}
-		};
+			public void focusLost(FocusEvent e) {
+			}
+		});
 		this.textEdit.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
 				if((e.getKeyChar()=='D'||e.getKeyChar()=='d')&&((e.getModifiersEx()&KeyEvent.ALT_DOWN_MASK)!=0))

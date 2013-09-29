@@ -1,6 +1,6 @@
 -=RU=-
 1) Установливаем Jailbreak (http://www.the-ebook.org/forum/viewtopic.php?t=17874)
-2) Скачиваем файлы KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) и update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip).
+2) Скачиваем файлы KindleNote.azw2 (http://www.mobileread.com/forums/attachment.php?attachmentid=112335&d=1380438328) и update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip).
 3) Подключаем Kindle к компьютеру и копируем KindleNote.azw2 в папку documents, а соответствующий* файл из архива update_dev-key_0.4.zip - в корневую директорию (ну как и любой хак, вы же поняли).
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle перезапускается
@@ -24,7 +24,7 @@
 -=EN=-
 Installion
 1) Install Jailbreak
-2) Download KindleNote.azw2 (https://github.com/downloads/proDOOMman/KindleNote/KindleNote.azw2) and update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip)
+2) Download KindleNote.azw2 (http://www.mobileread.com/forums/attachment.php?attachmentid=112335&d=1380438328) and update_dev-key_0.4.zip (https://github.com/downloads/proDOOMman/KindleNote/update_dev-key_0.4.zip)
 3) Connect Kindle to computer and copy KindleNote_en.azw2 to directory "documents" and update_dev-key_0.4.N_${version}_install.bin to root directory. Also put your favorite keyboard.txt or keyboard_european.txt to (/mnt/us/)developer/KindleNote/work
 4) Home->Menu->Settings->Menu->Update Your Kindle
 5) Kindle restarting
